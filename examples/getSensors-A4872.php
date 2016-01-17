@@ -1,12 +1,11 @@
 #!/usr/bin/php -q
 <?
-$cwd=exec('pwd');
-
-require $cwd . '/lib/lib.modbus.php';
-require $cwd . '/lib/lib.pcwx.php';
-require $cwd . '/lib/lib.w1temp.php';
-require $cwd . '/lib/lib.nmea.php';
-require $cwd . '/lib/lib.senddata.php';
+chdir($_SERVER['HOME'] . '/pmodbusq');
+require 'lib/lib.modbus.php';
+require 'lib/lib.pcwx.php';
+require 'lib/lib.w1temp.php';
+require 'lib/lib.nmea.php';
+require 'lib/lib.senddata.php';
 
 define('NMEA_MAX_AGE',5000);
 $hostname=gethostname();

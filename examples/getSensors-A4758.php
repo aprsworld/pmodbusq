@@ -1,8 +1,9 @@
 #!/usr/bin/php -q
 <?
-require 'lib.modbus.php';
-require 'lib.pcwx.php';
-require 'lib.senddata.php';
+chdir($_SERVER['HOME'] . '/pmodbusq');
+require 'lib/lib.modbus.php';
+require 'lib/lib.pcwx.php';
+require 'lib/lib.senddata.php';
 
 $hostname=gethostname();
 if ( 'cam' == substr($hostname,0,3) ) {
