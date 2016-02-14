@@ -1,6 +1,5 @@
 #!/usr/bin/php -q
 <?
-/* get our paths right */
 require_once dirname(__FILE__) . '/../pmodbusq.php';
 require_once 'lib/lib.modbus.php';
 require_once 'lib/lib.pcwx.php';

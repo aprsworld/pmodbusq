@@ -1,6 +1,6 @@
 #!/usr/bin/php -q
 <?
-chdir($_SERVER['HOME'] . '/pmodbusq');
+require_once dirname(__FILE__) . '/../pmodbusq.php';
 require 'lib/lib.modbus.php';
 require 'lib/lib.pcwx.php';
 require 'lib/lib.senddata.php';
