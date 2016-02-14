@@ -1,3 +1,3 @@
 # getSensors is typically a symbolic link to somewhere for this
 # specific system. Ignore.
-getSensors*
+getSensors
