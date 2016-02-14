@@ -1,5 +1,5 @@
 <?
-require_once '/var/www/cam/phpmodbus/ModbusMaster.php';
+require_once 'phpmodbus-aprs/ModbusMaster.php';
 
 function setModbusRegisters($modbusHostname,$slaveAddress,$startRegister,$dataToWrite) {
 	$modbus = new ModbusMaster($modbusHostname, "TCP");
