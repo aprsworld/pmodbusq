@@ -45,9 +45,9 @@ $jd[$dname]['A4258'] += pcwx_encodeForBroadcast('Wind Average (Secondary)','m/s'
 $jd[$dname]['A4258'] += pcwx_encodeForBroadcast('Wind Count (Secondary)','',$r[6],'','',true);
 
 /* turbine on big tower */
-$rpm=pcwx_anemometer(12.0,0.0,$r[7]);
-$rpmGust=pcwx_anemometer(12.0,0.0,$r[8]);
-$rpmAverage=pcwx_anemometer_average(12.0,0.0,$r[6],$r[43]/100.0);
+$rpm=pcwx_anemometer(12.0,0.0,$r[13]);
+$rpmGust=pcwx_anemometer(12.0,0.0,$r[14]);
+$rpmAverage=pcwx_anemometer_average(12.0,0.0,$r[12],$r[43]/100.0);
 $jd[$dname]['A4258'] += pcwx_encodeForBroadcast('Turbine Rotor Speed','RPM',$rpm,'','',true);
 $jd[$dname]['A4258'] += pcwx_encodeForBroadcast('Turbine Rotor Gust','RPM',$rpmGust,'','',true);
 $jd[$dname]['A4258'] += pcwx_encodeForBroadcast('Turbine Rotor Average','RPM',$rpmAverage,'','',true);
