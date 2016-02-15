@@ -53,7 +53,8 @@ $jd[$dname]['ADAM0'] += pcwx_encodeForBroadcast('iRectifier24_MPPT600','amps',$i
 
 /* power calculations */
 $jd[$dname]['ADAM0'] += pcwx_encodeForBroadcast('pRectifier24_1','watts',$vBatt24 * $iRectifier24_1,'','',true);
-$jd[$dname]['ADAM0'] += pcwx_encodeForBroadcast('pRectifier12_1','watts',$vBatt12 * $iRectifier12_1,'','',true);
+$pRectifier12_1=$vBatt12 * $iRectifier12_1;
+$jd[$dname]['ADAM0'] += pcwx_encodeForBroadcast('pRectifier12_1','watts',$pRectifier12_1,'','',true);
 $jd[$dname]['ADAM0'] += pcwx_encodeForBroadcast('pRectifier24_MPPT600','watts',$vBatt24 * $iRectifier24_MPPT600,'','',true);
 
 /*
@@ -74,5 +75,55 @@ $jd[$dname]['ADAM0'] += pcwx_encodeForBroadcast('Run Date','',$_SERVER['REQUEST_
 /* send data to broadcast server(s) */
 print_r($jd);
 sendDataTCP($dest,$jd);
+
+/* 
+add to powerPeformance table 
+
+mysql> describe powerPerformance;
++--------------------+------------+------+-----+---------+-------+
+| Field              | Type       | Null | Key | Default | Extra |
++--------------------+------------+------+-----+---------+-------+
+| packet_date        | datetime   | NO   | PRI | NULL    |       |
+| wx_time            | double     | YES  |     | NULL    |       |
+| windAverage0       | float      | YES  |     | NULL    |       |
+| windSpeed0         | float      | YES  |     | NULL    |       |
+| windGust0          | float      | YES  |     | NULL    |       |
+| windCount0         | int(11)    | YES  |     | NULL    |       |
+| windAverage1       | float      | YES  |     | NULL    |       |
+| windSpeed1         | float      | YES  |     | NULL    |       |
+| windGust1          | float      | YES  |     | NULL    |       |
+| windCount1         | int(11)    | YES  |     | NULL    |       |
+| rpmAverage         | int(11)    | YES  |     | NULL    |       |
+| rpmSpeed           | int(11)    | YES  |     | NULL    |       |
+| rpmGust            | int(11)    | YES  |     | NULL    |       |
+| rpmCount           | int(11)    | YES  |     | NULL    |       |
+| windDirection      | int(11)    | YES  |     | NULL    |       |
+| temperatureAmbient | float      | YES  |     | NULL    |       |
+| power_time         | double     | YES  |     | NULL    |       |
+| vBatt              | float      | YES  |     | NULL    |       |
+| iRectifier         | float      | YES  |     | NULL    |       |
+| pOutput            | float      | YES  |     | NULL    |       |
+| valid              | tinyint(1) | YES  |     | NULL    |       |
++--------------------+------------+------+-----+---------+-------+
+21 rows in set (0.00 sec)
+*/
+
+/* connect to local mysql server */
+$mysqli = mysqli_connect('localhost','ppInsert','','powerPerformance');
+/* build SQL query. Using the ON DUPLICATE KEY UPDATE syntax we can come first or second for this mesurement */
+$sql=sprintf("INSERT INTO powerPerformance (packet_date,power_time,vBatt,iRectifier,pOutput) VALUES('%s',%s,%s,%s,%s) ON DUPLICATE KEY UPDATE power_time=%s, vBatt=%s, iRectifier=%s, pOutput=%s",
+	$datetime,
+	$_SERVER['REQUEST_TIME_FLOAT'],
+	$vBatt12,
+	$iRectifier12_1,
+	$pRectifier12_1,
+	$_SERVER['REQUEST_TIME_FLOAT'],
+	$vBatt12,
+	$iRectifier12_1,
+	$pRectifier12_1	
+);
+/* run query */
+$res = mysqli_query($mysqli, $sql);
+
 
 ?>
