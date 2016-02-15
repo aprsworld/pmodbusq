@@ -10,11 +10,12 @@ require_once 'lib/lib.senddata.php';
 
 $dname='A3351';
 
-if ( $_SERVER['argc'] != 2 || false === strpos($_SERVER['argv'][1],':') ) {
-	printf("usage: %s hostname:destination[,hostname1:port1,...hostnameN:portN]\n",$_SERVER['argv'][0]);
+if ( $_SERVER['argc'] != 3 || false === strpos($_SERVER['argv'][2],':') ) {
+	printf("usage: %s datetime hostname:destination[,hostname1:port1,...hostnameN:portN]\n",$_SERVER['argv'][0]);
 	return 1;
 }
-$dest=$_SERVER['argv'][1];
+$datetime=$_SERVER['argv'][1];
+$dest=$_SERVER['argv'][2];
 
 /* modbus registers read from XRW2G */
 $r=array();
@@ -67,7 +68,7 @@ $jd[$dname]['ADAM0'] += pcwx_encodeForBroadcast('pRectifier24_MPPT600','watts',$
 $jd[$dname]['ADAM0'] += pcwx_encodeForBroadcast('Modbus Host','','192.168.8.2:504');
 
 
-$jd[$dname]['ADAM0'] += pcwx_encodeForBroadcast('Packet Date','UTC',date("Y-m-d H:i:s"),'','',true);
+$jd[$dname]['ADAM0'] += pcwx_encodeForBroadcast('Packet Date','UTC',$datetime,'','',true);
 $jd[$dname]['ADAM0'] += pcwx_encodeForBroadcast('Run Date','',$_SERVER['REQUEST_TIME_FLOAT'],'','',true);
 
 /* send data to broadcast server(s) */
