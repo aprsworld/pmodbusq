@@ -1,5 +1,7 @@
 #!/usr/bin/php -q
 <?
+set_time_limit(2);
+
 require_once dirname(__FILE__) . '/../pmodbusq.php';
 require_once 'lib/lib.modbus.php';
 require_once 'lib/lib.pcwx.php';
