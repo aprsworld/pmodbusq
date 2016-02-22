@@ -14,6 +14,13 @@ if ( 'cam' == substr($hostname,0,3) ) {
 	$hostname=substr($hostname,3);
 }
 
+
+/* allow overriding hostname */
+if ( $_SERVER['argc'] == 5 ) {
+	$hostname=$_SERVER['argv'][4];
+	$_SERVER['argc']--;
+}
+
 if ( $_SERVER['argc'] != 4  ) {
 	printf("usage: %s unixTimeStamp fullSizeFile thumbnailFile\n",$_SERVER['argv'][0]);
 	return 1;

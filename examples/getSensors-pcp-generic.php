@@ -10,6 +10,12 @@ if ( 'cam' == substr($hostname,0,3) ) {
 	$hostname=substr($hostname,3);
 }
 
+/* allow overriding hostname */
+if ( $_SERVER['argc'] == 3 ) {
+	$hostname=$_SERVER['argv'][2];
+	$_SERVER['argc']--;
+}
+
 if ( $_SERVER['argc'] != 2 || false === strpos($_SERVER['argv'][1],':') ) {
 	printf("usage: %s hostname:destination[,hostname1:port1,...hostnameN:portN]\n",$_SERVER['argv'][0]);
 	return 1;
@@ -27,7 +33,7 @@ $jd=array();
 $jd[$hostname]['sensors']=array();
 
 
-$jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('Input Voltage','volts',$r[1]*0.024477);
+$jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('Input Voltage','volts',$r[1]*0.03418);
 $jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('Magnetic Switch State','',$r[6]);
 $jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('Magnetic Switch Latch','',$r[7]);
 
