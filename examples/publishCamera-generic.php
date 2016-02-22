@@ -24,8 +24,8 @@ $dest="localhost:1229";
 $jd=array();
 
 $jd[$hostname]['cameras']=array();
-$jd[$hostname]['cameras']['image_url']=sprintf("/cam/latest/latest.jpg");
-$jd[$hostname]['cameras']['image_size']=filesize($_SERVER['argv'][2]);
+$jd[$hostname]['cameras']['image_url']=sprintf("/cam/latest/%s",basename($_SERVER['argv'][3]));
+$jd[$hostname]['cameras']['image_size']=filesize($_SERVER['argv'][3]);
 $jd[$hostname]['cameras']['source_serial']=$hostname;
 /* source_ip_addr, source_ip_port */
 
