@@ -26,6 +26,28 @@ $jd=array();
 
 $jd[$hostname]['sensors']=array();
 $jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('Input Voltage','volts',$r[18]*0.008545);
+
+$rainSum=$r[16]+($r[17]<<16);
+$jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('Rain Pulses Sum','pulses',$rainSum);
+$jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('Rain Inches Sum','inches',$rainSum*0.01);
+
+/* global water pressure sensor
+0' = 4.009mA
+8.19' = 18.857mA
+
+dropped over 120 ohm resistor on user ADC 3 
+
+feet = 4.5938*volts-2.205
+
+5.44' on this gauge is approximately 39.35' at black river falls station
+(datum 700')
+
+*/
+$jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('Water Depth (pressure) volts','volts',$r[40]*0.001220703);
+$jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('Water Depth (pressure) amps','amps',$r[40]*0.001220703/120.0);
+$jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('Water Depth (pressure) feet','feet',4.5938*($r[40]*0.001220703)-2.205);
+
+
 $jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('Sequence Number','',$r[42]);
 $jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('Ticks','seconds',$r[43]*0.001);
 $jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('Uptime','minutes',$r[44]);
