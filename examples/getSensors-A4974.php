@@ -70,7 +70,7 @@ if ( $t_batt > 32767 )
 $jd[$hostname]['TriStar'] += pcwx_encodeForBroadcast('Battery Temperature','&deg;C',$t_batt,'temperature','c');
 
 $jd[$hostname]['TriStar'] += pcwx_encodeForBroadcast('Reference Voltage','VDC',$r[0x0010]*96.667*pow(2,-15));
-$jd[$hostname]['TriStar'] += pcwx_encodeForBroadcast('Duty Cycle','VDC',$r[0x001c]);
+$jd[$hostname]['TriStar'] += pcwx_encodeForBroadcast('Duty Cycle','%',$r[0x001c]);
 
 /* SunSaver MPPT on modbus, device ID=2 */
 /* current value registers */
