@@ -52,6 +52,7 @@ print_r($r);
 
 
 $jd[$hostname]['TriStar']=array();
+$jd[$hostname]['TriStar'] += pcwx_encodeForBroadcast('Packet Date','UTC',date("Y-m-d H:i:s"));
 
 /* sunsaver MPPT */
 $jd[$hostname]['TriStar'] += pcwx_encodeForBroadcast('Battery Voltage','VDC',$r[8]*96.667*pow(2,-15));
@@ -79,6 +80,7 @@ $r = getModbusRegisters('localhost',2,8,20);
 print_r($r);
 
 $jd[$hostname]['SunSaverMPPT']=array();
+$jd[$hostname]['SunSaverMPPT'] += pcwx_encodeForBroadcast('Packet Date','UTC',date("Y-m-d H:i:s"));
 
 /* sunsaver MPPT */
 $jd[$hostname]['SunSaverMPPT'] += pcwx_encodeForBroadcast('Battery Voltage','VDC',$r[8]*100*pow(2,-15));
