@@ -213,4 +213,45 @@ function parseNMEA0183($val) {
 		default:       return parseNMEA_unknown($parts);
 	}
 }
+
+function getNMEA0183nmeaReader($host, $port) {
+	$gpsDataJSON='';
+
+	$fp = @fsockopen($host,$port, $errno, $errstr, 30);
+	
+	if ( ! $fp ) {
+		return NULL;
+	}
+
+	while (!feof($fp)) {
+		$gpsDataJSON .= fgets($fp, 128);
+	}
+
+	fclose($fp);
+
+	return json_decode($gpsDataJSON,true);
+}
+
+/* we can get all the latest NMEA sentences from nmeaReader and then decode to wsBroadcast format  with something like:
+
+<?
+require 'lib.nmea.php';
+
+$r = getNMEA0183nmeaReader('192.168.1.2',2627);
+
+print_r($r);
+var_dump($r);
+
+$g=array();
+
+if ( NULL !== $r ) {
+	foreach( $r as $key=>$value) {
+		$g .= parseNMEA0183($value['sentence']);
+	}
+}
+
+print_r($g);
+?>
+*/
+
 ?>
