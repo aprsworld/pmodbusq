@@ -111,7 +111,7 @@ function parseNMEA_GPGGA($parts) {
 
 	switch ( $parts[6] ) {
 		case 0: $q='Fix not available or invalid'; break;
-		case 1: $q='Fix not available or invalid'; break;
+		case 1: $q='GPS, fix valid'; break;
 		case 2: $q='Differential GPS, SPS Mode, fix valid'; break;
 		case 3: $q='GPS PPS Mode, fix valid';  break;
 		case 4: $q='Real Time Kinematic (RTK)'; break;
@@ -162,8 +162,8 @@ function parseNMEA_WIMDA($parts) {
 	$j=array();
 	$j += parseNMEA_encodeParsed('Barometric Pressure','bars',$parts[3],'atmosphericPressure','bars');
 	$j += parseNMEA_encodeParsed('Air Temperature','&deg;C',$parts[5],'temperature','C');
-	$j += parseNMEA_encodeParsed('Air Temperature (float)','&deg;C',(float) $parts[5],'temperature','C');
-	$j += parseNMEA_encodeParsed('Air Temperature (string)','&deg;C',(string) $parts[5],'temperature','C');
+//	$j += parseNMEA_encodeParsed('Air Temperature (float)','&deg;C',(float) $parts[5],'temperature','C');
+//	$j += parseNMEA_encodeParsed('Air Temperature (string)','&deg;C',(string) $parts[5],'temperature','C');
 	$j += parseNMEA_encodeParsed('Relative Humidity','%',$parts[9]);
 	$j += parseNMEA_encodeParsed('Wind Direction (true)','&deg;',$parts[13]);
 	$j += parseNMEA_encodeParsed('Wind Direction (magnetic)','&deg;',$parts[15]);
@@ -173,7 +173,8 @@ function parseNMEA_WIMDA($parts) {
 }
 
 function parseNMEA_unknown($parts) {
-	print_r($parts);
+	return array();
+//	print_r($parts);
 }
 
 function parseNMEA0183($val) {
