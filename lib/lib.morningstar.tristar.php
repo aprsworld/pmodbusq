@@ -98,6 +98,21 @@ function morningstar_tristar_explode_fault($val) {
 	return $r;
 }
 
+function morningstar_tristar_dip_switch_human($val) {
+	$r="";
+
+	for ( $i=0 ; $i<8 ; $i++ ) {
+		if ( $val & (1 << $i) ) {
+			$r .= "ON ";
+		} else {
+			$r .= "OFF ";
+		}
+	}
+
+	return trim($r);
+}
+
+
 function morningstar_tristar_add_result(& $result,$block,$title,$units,$value,$rp="") {
 	$result[$block]['title']=$title;
 	if ( '' == $rp ) {
@@ -171,6 +186,9 @@ function morningstar_tristar_get_data($modbusHost,$modbusAddress,& $result) {
 		morningstar_tristar_implode_human(morningstar_tristar_explode_fault($result['BITFIELD_FAULT']['value']))
 	);
 
+	$result=morningstar_tristar_add_result($result,'BITFIELD_DIP_SWITCH_HUMAN','DIP Switch Settings','', morningstar_tristar_dip_switch_human($result['BITFIELD_DIP_SWITCH']['value']));
+
+
 
 
 	/* read TriStar kWh EEPROM register 0xe02c */
@@ -186,7 +204,7 @@ function morningstar_tristar_get_data($modbusHost,$modbusAddress,& $result) {
 	$result=morningstar_tristar_add_result($result,'KWH','kWh','kWh',$r[0xe02c]);
 
 
-	print_r($result);
+//	print_r($result);
 	
 
 	return false;
