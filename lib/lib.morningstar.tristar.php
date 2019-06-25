@@ -98,14 +98,24 @@ function morningstar_tristar_explode_fault($val) {
 	return $r;
 }
 
+function morningstar_tristar_add_result(& $result,$block,$title,$units,$value,$rp="") {
+	$result[$block]['title']=$title;
+	if ( '' == $rp ) {
+		$result[$block]['value']=$value;
+	} else {
+		$result[$block]['value']=round($value,$rp);
+	}
+	$result[$block]['units']=$units;
+
+	return $result;
+}
+
 
 function morningstar_tristar_get_data($modbusHost,$modbusAddress,& $result) {
 	/* read registers 0x8 to 0x1d -- compatible with software newer than 1.04.02 */
 	$r = getModbusRegisters($modbusHost,$modbusAddress,0x08,(0x1d-0x08)+1);
 
-	foreach ( $r as $k => $v ) {
-		printf("# r[0x%04x]=%s\n",$k,$v);
-	}
+//	foreach ( $r as $k => $v ) { printf("# r[0x%04x]=%s\n",$k,$v); }
 
 	if ( 0 == count($r) ) {
 		/* no results returned */
@@ -122,58 +132,58 @@ function morningstar_tristar_get_data($modbusHost,$modbusAddress,& $result) {
 	if ( $t_batt > 32767 ) 
 		$t_batt = $t_batt - 65536;
 
-	$r[0x1c]=115;
 	$pwm = $r[0x1c]*(1.0/2.3);
 	if ( $pwm > 100.0 )
 		$pwm=100.0;
 
 	/* put into descriptive array */
+	$result=morningstar_tristar_add_result($result,'V_BATTERY','Battery Voltage','VDC', $r[0x8]*96.667*pow(2,-15), 2);
+	$result=morningstar_tristar_add_result($result,'V_BATTERY_SENSE','Battery Sense Voltage','VDC', $r[0x9]*96.667*pow(2,-15), 2);
+	$result=morningstar_tristar_add_result($result,'V_ARRAY_LOAD','Array / Load Voltage','VDC', $r[0xa]*139.15*pow(2,-15), 2);
+	$result=morningstar_tristar_add_result($result,'I_CHARGING','Charging Current','amps DC', $r[0xb]*66.667*pow(2,-15), 2);
+	$result=morningstar_tristar_add_result($result,'I_LOAD','Load Current','amps DC', $r[0xc]*316.67*pow(2,-15), 2);
+	$result=morningstar_tristar_add_result($result,'V_BATTERY_SLOW','Battery Voltage (slow)','VDC', $r[0xd]*96.667*pow(2,-15), 2);
+	$result=morningstar_tristar_add_result($result,'T_HEATSINK','Heatsink Temperature','&deg; C', $t_hs);
+	$result=morningstar_tristar_add_result($result,'T_BATT','Battery Temperature','&deg; C', $t_batt);
+	$result=morningstar_tristar_add_result($result,'V_TARGET','Target Voltage','VDC', $r[0x10]*96.667*pow(2,-15), 2);
 
-	$result['VOLTAGE_BATTERY_FILTERED']       =$r[0x8]*96.667*pow(2,-15);
-	$result['VOLTAGE_BATTERY_SENSE_FILTERED'] =$r[0x9]*96.667*pow(2,-15);
-	$result['VOLTAGE_ARRAY_LOAD_FILTERED']    =$r[0xA]*139.15*pow(2,-15);
-	$result['CURRENT_CHARGING_FILTERED']      =$r[0xB]*66.667*pow(2,-15);
-	$result['CURRENT_LOAD_FILTERED']          =$r[0xC]*316.67*pow(2,-15);
-	$result['VOLTAGE_BATTERY_SLOW_FILTERED']  =$r[0xD]*96.667*pow(2,-15);
-	$result['TEMPERATURE_HEATSINK']           =$t_hs;
-	$result['TEMPERATURE_BATTERY']            =$t_hs;
-	$result['VOLTAGE_REFERENCE']              =$r[0x10]*96.667*pow(2,-15);
-	$result['AMPHOURS_RESETTABLE']            =(($r[0x11]<<16) + $r[0x12])*0.1;
-	$result['AMPHOURS_TOTAL']                 =(($r[0x13]<<16) + $r[0x14])*0.1;
-	$result['HOURS_HOURMETER']                =(($r[0x15]<<16) + $r[0x16]);
-	$result['BITFIELD_ALARM']                 =(($r[0x1d]<<16) + $r[0x17]);
-	$result['BITFIELD_FAULT']                 =$r[0x18];
-	$result['BITFIELD_DIP_SWITCH']            =$r[0x19];
-	$result['CONTROL_MODE']                   =$r[0x1a];
-	$result['CONTROL_STATE']                  =$r[0x1b];
-	$result['DUTYCYCLE_PWM']                  =$pwm;
+	$result=morningstar_tristar_add_result($result,'AMPHOURS_RESETTABLE','Amp/hours (resettable)','amp/hours', (($r[0x11]<<16) + $r[0x12])*0.1);
+	$result=morningstar_tristar_add_result($result,'AMPHOURS_TOTAL','Amp/hours (total)','amp/hours', (($r[0x13]<<16) + $r[0x14])*0.1);
+	$result=morningstar_tristar_add_result($result,'HOURS_HOURMETER','Hour meter','hours', (($r[0x15]<<16) + $r[0x16]));
+	$result=morningstar_tristar_add_result($result,'BITFIELD_ALARM','Alarm Value','', (($r[0x1d]<<16) + $r[0x17]));
+	$result=morningstar_tristar_add_result($result,'BITFIELD_FAULT','Fault Value','', $r[0x18]);
+	$result=morningstar_tristar_add_result($result,'BITFIELD_DIP_SWITCH','DIP Switch Value','',$r[0x19]);
+	$result=morningstar_tristar_add_result($result,'CONTROL_MODE','Control Mode','',$r[0x1a]);
+	$result=morningstar_tristar_add_result($result,'CONTROL_STATE','Control State','',$r[0x1b]);
+	$result=morningstar_tristar_add_result($result,'DUTYCYCLE_PWM','PWM Duty Cycle','%',$pwm);
 
 
 	/* decode some things into human readable */
-	$result['CONTROL_MODE_HUMAN']=morningstar_tristar_lookup_control_mode_human($result['CONTROL_MODE']);
+	$result=morningstar_tristar_add_result($result,'CONTROL_MODE_HUMAN','Control Mode','', morningstar_tristar_lookup_control_mode_human($result['CONTROL_MODE']['value']));
 
-	$result['CONTROL_STATE_HUMAN']=morningstar_tristar_lookup_control_state_human($result['CONTROL_MODE'],$result['CONTROL_STATE']);
+	$result=morningstar_tristar_add_result($result,'CONTROL_STATE_HUMAN','Control State','', morningstar_tristar_lookup_control_state_human($result['CONTROL_MODE']['value'],$result['CONTROL_STATE']['value']));
 
-	$result['BITFIELD_ALARM_DECODED']=morningstar_tristar_explode_alarm($result['BITFIELD_ALARM']);
-	$result['BITFIELD_ALARM_DECODED_HUMAN']=morningstar_tristar_implode_human($result['BITFIELD_ALARM_DECODED']);
+	$result=morningstar_tristar_add_result($result,'BITFIELD_ALARM_HUMAN','Alarm(s)','',
+		morningstar_tristar_implode_human(morningstar_tristar_explode_alarm($result['BITFIELD_ALARM']['value']))
+	);
 
-	$result['BITFIELD_FAULT_DECODED']=morningstar_tristar_explode_fault($result['BITFIELD_FAULT']);
-	$result['BITFIELD_FAULT_DECODED_HUMAN']=morningstar_tristar_implode_human($result['BITFIELD_FAULT_DECODED']);
+	$result=morningstar_tristar_add_result($result,'BITFIELD_FAULT_HUMAN','Fault(s)','',
+		morningstar_tristar_implode_human(morningstar_tristar_explode_fault($result['BITFIELD_FAULT']['value']))
+	);
+
 
 
 	/* read TriStar kWh EEPROM register 0xe02c */
 	$r = getModbusRegisters($modbusHost,$modbusAddress,0xe02c,1);
 
-	foreach ( $r as $k => $v ) {
-		printf("# r(eeprom)[0x%04x]=%s\n",$k,$v);
-	}
+//	foreach ( $r as $k => $v ) { printf("# r(eeprom)[0x%04x]=%s\n",$k,$v); }
 
 	if ( 0 == count($r) ) {
 		/* no results returned */
 		return true;
 	}
 
-	$result['KWH']                            =$r[0xe02c];
+	$result=morningstar_tristar_add_result($result,'KWH','kWh','kWh',$r[0xe02c]);
 
 
 	print_r($result);
