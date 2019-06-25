@@ -1,5 +1,5 @@
 <?
-function morningstar_tristar_lookup_control_state_human($mode,$val) {
+function ms_tristar_lookup_control_state_human($mode,$val) {
 	if ( 0x00 == $mode || 0x02 == $mode ) {
 		$control_state_human=array('START','NIGHT CHECK','DISCONNECT','NIGHT','FAULT','BULK','PWM','FLOAT','EQUALIZE');
 	} else if ( 0x01 == $mode || 0x03 == $mode ) {
@@ -15,7 +15,7 @@ function morningstar_tristar_lookup_control_state_human($mode,$val) {
 	return sprintf("INVALID CONTROL STATE %d",$val);
 }
 
-function morningstar_tristar_lookup_control_mode_human($val) {
+function ms_tristar_lookup_control_mode_human($val) {
 	$control_mode_human=array(0=>'CHARGE',1=>'LOAD',2=>'DIVERSION',3=>'LIGHTING');
 
 	if ( array_key_exists($val,$control_mode_human) ) {
@@ -25,11 +25,11 @@ function morningstar_tristar_lookup_control_mode_human($val) {
 	return sprintf("INVALID CONTROL MODE %d",$val);
 }
 
-function morningstar_tristar_implode_human($a) {
+function ms_tristar_implode_human($a) {
 	return implode(', ',$a);
 }
 
-function morningstar_tristar_explode_alarm($val) {
+function ms_tristar_explode_alarm($val) {
 	$alarm=array();
 	$alarm[0]='RTS OPEN';
 	$alarm[1] ='RTS SHORTED';
@@ -68,7 +68,7 @@ function morningstar_tristar_explode_alarm($val) {
 
 }
 
-function morningstar_tristar_explode_fault($val) {
+function ms_tristar_explode_fault($val) {
 	$fault=array();
 	$fault[0] ='EXTERNAL SHORT';
 	$fault[1] ='OVERCURRENT';
@@ -98,7 +98,7 @@ function morningstar_tristar_explode_fault($val) {
 	return $r;
 }
 
-function morningstar_tristar_dip_switch_human($val) {
+function ms_tristar_dip_switch_human($val) {
 	$r="";
 
 	for ( $i=0 ; $i<8 ; $i++ ) {
@@ -113,7 +113,7 @@ function morningstar_tristar_dip_switch_human($val) {
 }
 
 
-function morningstar_tristar_add_result(& $result,$block,$title,$units,$value,$rp="") {
+function ms_tristar_add_result(& $result,$block,$title,$units,$value,$rp="") {
 	$result[$block]['title']=$title;
 	if ( '' == $rp ) {
 		$result[$block]['value']=$value;
@@ -126,7 +126,7 @@ function morningstar_tristar_add_result(& $result,$block,$title,$units,$value,$r
 }
 
 
-function morningstar_tristar_get_data($modbusHost,$modbusAddress,& $result) {
+function ms_tristar_get_data($modbusHost,$modbusAddress,& $result) {
 	/* read registers 0x8 to 0x1d -- compatible with software newer than 1.04.02 */
 	$r = getModbusRegisters($modbusHost,$modbusAddress,0x08,(0x1d-0x08)+1);
 
@@ -152,41 +152,41 @@ function morningstar_tristar_get_data($modbusHost,$modbusAddress,& $result) {
 		$pwm=100.0;
 
 	/* put into descriptive array */
-	$result=morningstar_tristar_add_result($result,'V_BATTERY','Battery Voltage','VDC', $r[0x8]*96.667*pow(2,-15), 2);
-	$result=morningstar_tristar_add_result($result,'V_BATTERY_SENSE','Battery Sense Voltage','VDC', $r[0x9]*96.667*pow(2,-15), 2);
-	$result=morningstar_tristar_add_result($result,'V_ARRAY_LOAD','Array / Load Voltage','VDC', $r[0xa]*139.15*pow(2,-15), 2);
-	$result=morningstar_tristar_add_result($result,'I_CHARGING','Charging Current','amps DC', $r[0xb]*66.667*pow(2,-15), 2);
-	$result=morningstar_tristar_add_result($result,'I_LOAD','Load Current','amps DC', $r[0xc]*316.67*pow(2,-15), 2);
-	$result=morningstar_tristar_add_result($result,'V_BATTERY_SLOW','Battery Voltage (slow)','VDC', $r[0xd]*96.667*pow(2,-15), 2);
-	$result=morningstar_tristar_add_result($result,'T_HEATSINK','Heatsink Temperature','&deg; C', $t_hs);
-	$result=morningstar_tristar_add_result($result,'T_BATT','Battery Temperature','&deg; C', $t_batt);
-	$result=morningstar_tristar_add_result($result,'V_TARGET','Target Voltage','VDC', $r[0x10]*96.667*pow(2,-15), 2);
+	$result=ms_tristar_add_result($result,'V_BATTERY','Battery Voltage','VDC', $r[0x8]*96.667*pow(2,-15), 2);
+	$result=ms_tristar_add_result($result,'V_BATTERY_SENSE','Battery Sense Voltage','VDC', $r[0x9]*96.667*pow(2,-15), 2);
+	$result=ms_tristar_add_result($result,'V_ARRAY_LOAD','Array / Load Voltage','VDC', $r[0xa]*139.15*pow(2,-15), 2);
+	$result=ms_tristar_add_result($result,'I_CHARGING','Charging Current','amps DC', $r[0xb]*66.667*pow(2,-15), 2);
+	$result=ms_tristar_add_result($result,'I_LOAD','Load Current','amps DC', $r[0xc]*316.67*pow(2,-15), 2);
+	$result=ms_tristar_add_result($result,'V_BATTERY_SLOW','Battery Voltage (slow)','VDC', $r[0xd]*96.667*pow(2,-15), 2);
+	$result=ms_tristar_add_result($result,'T_HEATSINK','Heatsink Temperature','&deg; C', $t_hs);
+	$result=ms_tristar_add_result($result,'T_BATT','Battery Temperature','&deg; C', $t_batt);
+	$result=ms_tristar_add_result($result,'V_TARGET','Target Voltage','VDC', $r[0x10]*96.667*pow(2,-15), 2);
 
-	$result=morningstar_tristar_add_result($result,'AMPHOURS_RESETTABLE','Amp/hours (resettable)','amp/hours', (($r[0x11]<<16) + $r[0x12])*0.1);
-	$result=morningstar_tristar_add_result($result,'AMPHOURS_TOTAL','Amp/hours (total)','amp/hours', (($r[0x13]<<16) + $r[0x14])*0.1);
-	$result=morningstar_tristar_add_result($result,'HOURS_HOURMETER','Hour meter','hours', (($r[0x15]<<16) + $r[0x16]));
-	$result=morningstar_tristar_add_result($result,'BITFIELD_ALARM','Alarm Value','', (($r[0x1d]<<16) + $r[0x17]));
-	$result=morningstar_tristar_add_result($result,'BITFIELD_FAULT','Fault Value','', $r[0x18]);
-	$result=morningstar_tristar_add_result($result,'BITFIELD_DIP_SWITCH','DIP Switch Value','',$r[0x19]);
-	$result=morningstar_tristar_add_result($result,'CONTROL_MODE','Control Mode','',$r[0x1a]);
-	$result=morningstar_tristar_add_result($result,'CONTROL_STATE','Control State','',$r[0x1b]);
-	$result=morningstar_tristar_add_result($result,'DUTYCYCLE_PWM','PWM Duty Cycle','%',$pwm);
+	$result=ms_tristar_add_result($result,'AMPHOURS_RESETTABLE','Amp/hours (resettable)','amp/hours', (($r[0x11]<<16) + $r[0x12])*0.1);
+	$result=ms_tristar_add_result($result,'AMPHOURS_TOTAL','Amp/hours (total)','amp/hours', (($r[0x13]<<16) + $r[0x14])*0.1);
+	$result=ms_tristar_add_result($result,'HOURS_HOURMETER','Hour meter','hours', (($r[0x15]<<16) + $r[0x16]));
+	$result=ms_tristar_add_result($result,'BITFIELD_ALARM','Alarm Value','', (($r[0x1d]<<16) + $r[0x17]));
+	$result=ms_tristar_add_result($result,'BITFIELD_FAULT','Fault Value','', $r[0x18]);
+	$result=ms_tristar_add_result($result,'BITFIELD_DIP_SWITCH','DIP Switch Value','',$r[0x19]);
+	$result=ms_tristar_add_result($result,'CONTROL_MODE','Control Mode','',$r[0x1a]);
+	$result=ms_tristar_add_result($result,'CONTROL_STATE','Control State','',$r[0x1b]);
+	$result=ms_tristar_add_result($result,'DUTYCYCLE_PWM','PWM Duty Cycle','%',$pwm);
 
 
 	/* decode some things into human readable */
-	$result=morningstar_tristar_add_result($result,'CONTROL_MODE_HUMAN','Control Mode','', morningstar_tristar_lookup_control_mode_human($result['CONTROL_MODE']['value']));
+	$result=ms_tristar_add_result($result,'CONTROL_MODE_HUMAN','Control Mode','', ms_tristar_lookup_control_mode_human($result['CONTROL_MODE']['value']));
 
-	$result=morningstar_tristar_add_result($result,'CONTROL_STATE_HUMAN','Control State','', morningstar_tristar_lookup_control_state_human($result['CONTROL_MODE']['value'],$result['CONTROL_STATE']['value']));
+	$result=ms_tristar_add_result($result,'CONTROL_STATE_HUMAN','Control State','', ms_tristar_lookup_control_state_human($result['CONTROL_MODE']['value'],$result['CONTROL_STATE']['value']));
 
-	$result=morningstar_tristar_add_result($result,'BITFIELD_ALARM_HUMAN','Alarm(s)','',
-		morningstar_tristar_implode_human(morningstar_tristar_explode_alarm($result['BITFIELD_ALARM']['value']))
+	$result=ms_tristar_add_result($result,'BITFIELD_ALARM_HUMAN','Alarm(s)','',
+		ms_tristar_implode_human(ms_tristar_explode_alarm($result['BITFIELD_ALARM']['value']))
 	);
 
-	$result=morningstar_tristar_add_result($result,'BITFIELD_FAULT_HUMAN','Fault(s)','',
-		morningstar_tristar_implode_human(morningstar_tristar_explode_fault($result['BITFIELD_FAULT']['value']))
+	$result=ms_tristar_add_result($result,'BITFIELD_FAULT_HUMAN','Fault(s)','',
+		ms_tristar_implode_human(ms_tristar_explode_fault($result['BITFIELD_FAULT']['value']))
 	);
 
-	$result=morningstar_tristar_add_result($result,'BITFIELD_DIP_SWITCH_HUMAN','DIP Switch Settings','', morningstar_tristar_dip_switch_human($result['BITFIELD_DIP_SWITCH']['value']));
+	$result=ms_tristar_add_result($result,'BITFIELD_DIP_SWITCH_HUMAN','DIP Switch Settings','', ms_tristar_dip_switch_human($result['BITFIELD_DIP_SWITCH']['value']));
 
 
 
@@ -201,7 +201,7 @@ function morningstar_tristar_get_data($modbusHost,$modbusAddress,& $result) {
 		return true;
 	}
 
-	$result=morningstar_tristar_add_result($result,'KWH','kWh','kWh',$r[0xe02c]);
+	$result=ms_tristar_add_result($result,'KWH','kWh','kWh',$r[0xe02c]);
 
 
 //	print_r($result);
