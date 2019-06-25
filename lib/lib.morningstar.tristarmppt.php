@@ -126,7 +126,7 @@ function ms_tristarmppt_get_data($modbusHost,$modbusAddress,& $result) {
 	/* read registers 0x8 to 0x4d */
 	$r = getModbusRegisters($modbusHost,$modbusAddress,0x00,0x49+1);
 
-	foreach ( $r as $k => $v ) { printf("# r[0x%04x]=%s\n",$k,$v); }
+//	foreach ( $r as $k => $v ) { printf("# r[0x%04x]=%s\n",$k,$v); }
 
 	if ( 0 == count($r) ) {
 		/* no results returned */
@@ -232,25 +232,9 @@ function ms_tristarmppt_get_data($modbusHost,$modbusAddress,& $result) {
 	$result=ms_tristarmppt_add_result($result,'BITFIELD_DIP_SWITCH_HUMAN','DIP Switch Settings','', ms_tristarmppt_dip_switch_human($result['BITFIELD_DIP_SWITCH']['value']));
 
 	$result=ms_tristarmppt_add_result($result,'CHARGE_STATE_HUMAN','Charge State','', ms_tristarmppt_lookup_charge_state_human($result['CHARGE_STATE']['value']));
-	print_r($result);
-	return false;
-
-	$result=ms_tristarmppt_add_result($result,'HOURS_HOURMETER','Hour meter','hours', (($r[0x15]<<16) + $r[0x16]));
-	$result=ms_tristarmppt_add_result($result,'CONTROL_MODE','Control Mode','',$r[0x1a]);
-	$result=ms_tristarmppt_add_result($result,'CONTROL_STATE','Control State','',$r[0x1b]);
-	$result=ms_tristarmppt_add_result($result,'DUTYCYCLE_PWM','PWM Duty Cycle','%',$pwm);
 
 
-	/* decode some things into human readable */
-	$result=ms_tristarmppt_add_result($result,'CONTROL_MODE_HUMAN','Control Mode','', ms_tristarmppt_lookup_control_mode_human($result['CONTROL_MODE']['value']));
-
-
-
-
-
-
-
-	print_r($result);
+//	print_r($result);
 	
 
 	return false;

@@ -21,13 +21,15 @@ $dest=$_SERVER['argv'][1];
 $r=array();
 $r['TriStar']=array();
 $r['TriStar']['Dump']=array();
-ms_tristar_get_data('localhost',1,$r['TriStar']['Dump']);
-
 $r['TriStar MPPT']=array();
 $r['TriStar MPPT']['Solar A']=array();
-ms_tristarmppt_get_data('localhost',2,$r['TriStar MPPT']['Solar A']);
+$r['TriStar MPPT']['Solar B']=array();
 
-//print_r($r);
+ms_tristar_get_data('localhost',1,$r['TriStar']['Dump']);
+ms_tristarmppt_get_data('localhost',2,$r['TriStar MPPT']['Solar A']);
+ms_tristarmppt_get_data('localhost',3,$r['TriStar MPPT']['Solar B']);
+
+print_r($r);
 
 
 die("\ndone\n");
