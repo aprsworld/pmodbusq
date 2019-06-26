@@ -1,4 +1,33 @@
 <?
+function wsbroadcast_md5_block(& $r) {
+	$result=array();
+
+	foreach ( $r as $key => &$value) {
+		/* md5 the key and copy to result array */
+		$result[md5($key)]=$value;
+	}
+
+	return $result;
+}
+
+function wsbroadcast_prefix_block(& $r, $prefixKey,$prefixTitle='') {
+	$result=array();
+
+	foreach ( $r as $key => &$value) {
+		/* prefix the human readable title if desired */
+		if ( is_array($value) && isset($value['title']) && $prefixTitle != '' ) {
+			$value['title']=$prefixTitle . $value['title'];
+		}
+	
+		/* prefix the key and copy to result array */
+		$result[$prefixKey . $key]=$value;
+	}
+
+	return $result;
+}
+
+
+
 function sendDataTCP($broadcastHost,$data) {
 	// Wrap the JSON object and convert it to a string
 	$js = json_encode($data);

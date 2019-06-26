@@ -104,7 +104,10 @@ function ms_tristarmppt_add_result(& $result,$block,$title,$units,$value,$rp="")
 	} else {
 		$result[$block]['value']=round($value,$rp);
 	}
-	$result[$block]['units']=$units;
+
+	if ( '' != $units ) {
+		$result[$block]['units']=$units;
+	}
 
 	return $result;
 }
@@ -122,7 +125,9 @@ function ms_tristarmppt_scaleSigned($adc, $scale, $power) {
 }
 
 
-function ms_tristarmppt_get_data($modbusHost,$modbusAddress,& $result) {
+function ms_tristarmppt_get_data($modbusHost,$modbusAddress) {
+	$result=array();
+
 	/* read registers 0x8 to 0x4d */
 	$r = getModbusRegisters($modbusHost,$modbusAddress,0x00,0x49+1);
 
@@ -130,8 +135,10 @@ function ms_tristarmppt_get_data($modbusHost,$modbusAddress,& $result) {
 
 	if ( 0 == count($r) ) {
 		/* no results returned */
-		return true;
+		return $result;
 	}
+
+//	foreach ( $r as $k => $v ) { printf("# r[0x%04x]=%s\n",$k,$v); }
 
 
 	/* calculated values */
@@ -237,7 +244,7 @@ function ms_tristarmppt_get_data($modbusHost,$modbusAddress,& $result) {
 //	print_r($result);
 	
 
-	return false;
+	return $result;
 
 }
 

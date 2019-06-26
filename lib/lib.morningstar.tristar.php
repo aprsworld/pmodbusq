@@ -120,13 +120,18 @@ function ms_tristar_add_result(& $result,$block,$title,$units,$value,$rp="") {
 	} else {
 		$result[$block]['value']=round($value,$rp);
 	}
-	$result[$block]['units']=$units;
+
+	if ( '' != $units ) {
+		$result[$block]['units']=$units;
+	}
 
 	return $result;
 }
 
 
-function ms_tristar_get_data($modbusHost,$modbusAddress,& $result) {
+function ms_tristar_get_data($modbusHost,$modbusAddress) {
+	$result=array();
+
 	/* read registers 0x8 to 0x1d -- compatible with software newer than 1.04.02 */
 	$r = getModbusRegisters($modbusHost,$modbusAddress,0x08,(0x1d-0x08)+1);
 
@@ -134,7 +139,7 @@ function ms_tristar_get_data($modbusHost,$modbusAddress,& $result) {
 
 	if ( 0 == count($r) ) {
 		/* no results returned */
-		return true;
+		return $result;
 	}
 
 	/* calculated values */
@@ -207,7 +212,7 @@ function ms_tristar_get_data($modbusHost,$modbusAddress,& $result) {
 //	print_r($result);
 	
 
-	return false;
+	return $result;
 
 }
 
