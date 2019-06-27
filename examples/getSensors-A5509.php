@@ -4,6 +4,7 @@ require_once dirname(__FILE__) . '/../pmodbusq.php';
 require 'lib/lib.modbus.php';
 require 'lib/lib.morningstar.tristar.php';
 require 'lib/lib.morningstar.tristarmppt.php';
+require 'lib/lib.pcwx.php';
 require 'lib/lib.senddata.php';
 
 $hostname=gethostname();
@@ -51,6 +52,8 @@ if ( false ) {
 $jd=array();
 $jd[$hostname]['title']='SolaBlok Demo System';
 $jd[$hostname]['sensors']=$sensors;
+$jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('Packet Date','UTC',date("Y-m-d H:i:s"));
+$jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('System Uptime','',exec("uptime"));
 
 
 /* send data to broadcast server(s) */
