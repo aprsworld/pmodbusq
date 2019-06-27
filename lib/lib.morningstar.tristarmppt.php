@@ -105,9 +105,7 @@ function ms_tristarmppt_add_result(& $result,$block,$title,$units,$value,$rp="")
 		$result[$block]['value']=round($value,$rp);
 	}
 
-	if ( '' != $units ) {
-		$result[$block]['units']=$units;
-	}
+	$result[$block]['units']=$units;
 
 	return $result;
 }

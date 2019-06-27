@@ -11,6 +11,8 @@ if ( 'cam' == substr($hostname,0,3) ) {
 	$hostname=substr($hostname,3);
 }
 
+$hostname='A5509';
+
 if ( $_SERVER['argc'] != 2 || false === strpos($_SERVER['argv'][1],':') ) {
 	printf("usage: %s hostname:destination[,hostname1:port1,...hostnameN:portN]\n",$_SERVER['argv'][0]);
 	return 1;
