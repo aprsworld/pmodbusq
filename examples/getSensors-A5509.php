@@ -54,6 +54,7 @@ $jd[$hostname]['title']='SolaBlok Demo System';
 $jd[$hostname]['sensors']=$sensors;
 $jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('Packet Date','UTC',date("Y-m-d H:i:s"));
 $jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('System Uptime','',exec("uptime"));
+$jd[$hostname]['sensors'] += pcwx_encodeForBroadcast('802.11 Signal','',exec("iwconfig wlan0 | grep Quality | cut -c 11-"));
 
 
 /* send data to broadcast server(s) */
