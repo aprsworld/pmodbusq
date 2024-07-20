@@ -141,8 +141,8 @@ function ms_tristarmppt_get_data($modbusHost,$modbusAddress) {
 
 	/* calculated values */
 	$v_pu = ms_tristarmppt_scale($r[0x00],$r[0x01]);
-	$i_pu = ms_tristarmppt_scale($r[0x00],$r[0x01]);
-	
+	$i_pu = ms_tristarmppt_scale($r[0x02],$r[0x03]);
+
 	$t_hs = $r[0x23];
 	if ( $t_hs > 32767 )
 		$t_hs -= 65536;
