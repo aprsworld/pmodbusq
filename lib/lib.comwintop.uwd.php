@@ -31,7 +31,13 @@ function comwintop_uwd_get_data($modbusHost,$modbusAddress) {
 //	$result=comwintop_uwd_add_result($result,'WIND_DIRECTION_SECTOR','Wind Direction Sector','', $r[0x01f6]);
 	$result=comwintop_uwd_add_result($result,'WIND_DIRECTION','Wind Direction','&deg;', $r[0x01f7]);
 	$result=comwintop_uwd_add_result($result,'RELATIVE_HUMIDITY','Relative Humidity','%', $r[0x01f8]*0.1);
-	$result=comwintop_uwd_add_result($result,'TEMPERATURE','Temperature','&deg;C', $r[0x01f9]*0.1);
+	if ( $r[0x01f9] > 32767 ) {
+		/* negative */
+		$r[0x01f9] -= 65535;
+		$result=comwintop_uwd_add_result($result,'TEMPERATURE','Temperature','&deg;C', $r[0x01f9]*0.1);
+	} else {
+		$result=comwintop_uwd_add_result($result,'TEMPERATURE','Temperature','&deg;C', $r[0x01f9]*0.1);
+	}
 	$result=comwintop_uwd_add_result($result,'NOISE','Noise','db', $r[0x01fa]*0.1);
 	$result=comwintop_uwd_add_result($result,'PM2_5','PM2.5','ug/m^2', $r[0x01fb]);
 	$result=comwintop_uwd_add_result($result,'PM10','PM10','ug/m^2', $r[0x01fc]);
